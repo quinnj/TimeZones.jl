@@ -5,13 +5,17 @@ end
 
 Base.isless(a::Transition, b::Transition) = isless(a.utc_datetime, b.utc_datetime)
 
+# Ideally would always use ShortString63, but it's `hash` is broken on 32-bit systems.
+# https://github.com/JuliaString/MurmurHash3.jl/issues/12
+const VariableZoneName = Int === Int64 ? ShortString63 : String
+
 """
     VariableTimeZone
 
 A `TimeZone` with an offset that changes over time.
 """
 struct VariableTimeZone <: TimeZone
-    name::String
+    name::VariableZoneName
     transitions::Vector{Transition}
     cutoff::Union{DateTime,Nothing}
 
