@@ -1,3 +1,7 @@
+# Ideally would always use ShortString15, but it's `hash` is broken on 32-bit systems.
+# https://github.com/JuliaString/MurmurHash3.jl/issues/12
+const FixedTimeZoneName = Int === Int64 ? ShortString15 : String
+
 const FIXED_TIME_ZONE_REGEX = r"""
     ^(?|
         Z
@@ -30,7 +34,7 @@ const FIXED_TIME_ZONE_REGEX = r"""
 A `TimeZone` with a constant offset for all of time.
 """
 struct FixedTimeZone <: TimeZone
-    name::String
+    name::FixedTimeZoneName
     offset::UTCOffset
 end
 
@@ -72,7 +76,7 @@ UTC+15:45:21
 function FixedTimeZone(s::AbstractString)
     s == "Z" && return UTC_ZERO
 
-    m = match(FIXED_TIME_ZONE_REGEX, s)
+    m = match(FIXED_TIME_ZONE_REGEX, String(s))
     m === nothing && throw(ArgumentError("Unrecognized time zone: $s"))
 
     coefficient = m[:sign] == "-" ? -1 : 1

@@ -41,4 +41,14 @@
         fixed_tz = FixedTimeZone("UTC")
         @test size(fixed_tz .== fixed_tz) == ()
     end
+
+    @testset "isbits" begin
+        # We are not using ShortStrings on 32-bit due to hash being broken on 32-bit.
+        # See https://github.com/JuliaString/MurmurHash3.jl/issues/12
+        if Int === Int64
+            @test isbits(FixedTimeZone("0123"))
+        else
+            @test_broken isbits(FixedTimeZone("0123"))
+        end
+    end
 end
