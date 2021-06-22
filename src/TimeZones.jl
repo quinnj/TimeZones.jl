@@ -1,9 +1,11 @@
 module TimeZones
 
+
 using Dates
 using Printf
 using Serialization
 using RecipesBase: RecipesBase, @recipe
+using RelocatableFolders: @path
 using Unicode
 
 import Dates: TimeZone, UTC
@@ -31,7 +33,7 @@ export TimeZone, @tz_str, istimezone, FixedTimeZone, VariableTimeZone, ZonedDate
     guess
 
 const PKG_DIR = dirname(@__DIR__)
-const DEPS_DIR = joinpath(PKG_DIR, "deps")
+const DEPS_DIR = @path joinpath(PKG_DIR, "deps")
 
 # TimeZone types used to disambiguate the context of a DateTime
 # abstract type UTC <: TimeZone end  # Already defined in the Dates stdlib

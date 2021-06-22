@@ -8,7 +8,7 @@ else
     using Base: download
 end
 
-const LATEST_FILE = joinpath(DEPS_DIR, "latest")
+const LATEST_FILE = @path joinpath(DEPS_DIR, "latest")
 const LATEST_FORMAT = Dates.DateFormat("yyyy-mm-ddTHH:MM:SS")
 const LATEST_DELAY = Hour(1)  # In 1996 a correction to a release was made an hour later
 

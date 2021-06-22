@@ -1,6 +1,7 @@
 module TZData
 
 using Printf
+using RelocatableFolders
 using ...TimeZones: DEPS_DIR
 
 import Pkg
@@ -14,11 +15,11 @@ end
 # the "tzdata" archive or more specifically the "tz source" files within the archive
 # (africa, australasia, ...)
 
-const ARCHIVE_DIR = joinpath(DEPS_DIR, "tzarchive")
-const TZ_SOURCE_DIR = joinpath(DEPS_DIR, "tzsource")
-const COMPILED_DIR = joinpath(DEPS_DIR, "compiled", string(VERSION))
+const ARCHIVE_DIR = @path joinpath(DEPS_DIR, "tzarchive")
+const TZ_SOURCE_DIR = @path joinpath(DEPS_DIR, "tzsource")
+const COMPILED_DIR = @path joinpath(DEPS_DIR, "compiled", string(VERSION))
 
-const ARTIFACT_TOML = joinpath(@__DIR__, "..", "..", "Artifacts.toml")
+const ARTIFACT_TOML = @path joinpath(@__DIR__, "..", "..", "Artifacts.toml")
 
 export ARCHIVE_DIR, TZ_SOURCE_DIR, COMPILED_DIR, REGIONS, LEGACY_REGIONS
 

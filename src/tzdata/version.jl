@@ -29,7 +29,7 @@ const TZDATA_NEWS_REGEX = r"""
     \b
 """x
 
-const ACTIVE_VERSION_FILE = joinpath(DEPS_DIR, "active_version")
+const ACTIVE_VERSION_FILE = @path joinpath(DEPS_DIR, "active_version")
 
 
 """
