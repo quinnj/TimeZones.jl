@@ -1,4 +1,24 @@
-const TIME_ZONE_CACHE = Dict{String,Tuple{TimeZone,Class}}()
+const THREAD_TZ_CACHES = Dict{String,Tuple{TimeZone,Class}}[]
+
+# Based upon the thread-safe Global RNG implementation in the Random stdlib:
+# https://github.com/JuliaLang/julia/blob/e4fcdf5b04fd9751ce48b0afc700330475b42443/stdlib/Random/src/RNGs.jl#L369-L385
+@inline _tz_cache() = _tz_cache(Threads.threadid())
+@noinline function _tz_cache(tid::Int)
+    0 < tid <= length(THREAD_TZ_CACHES) || _tz_cache_length_assert()
+    if @inbounds isassigned(THREAD_TZ_CACHES, tid)
+        @inbounds cache = THREAD_TZ_CACHES[tid]
+    else
+        cache = eltype(THREAD_TZ_CACHES)()
+        @inbounds THREAD_TZ_CACHES[tid] = cache
+    end
+    return cache
+end
+@noinline _tz_cache_length_assert() = @assert false "0 < tid <= length(THREAD_TZ_CACHES)"
+
+function _reset_tz_cache()
+    # ensures that we didn't save a bad object
+    resize!(empty!(THREAD_TZ_CACHES), Threads.nthreads())
+end
 
 """
     TimeZone(str::AbstractString) -> TimeZone
@@ -43,7 +63,7 @@ TimeZone(::AbstractString, ::Class)
 function TimeZone(str::AbstractString, mask::Class=Class(:DEFAULT))
     # Note: If the class `mask` does not match the time zone we'll still load the
     # information into the cache to ensure the result is consistent.
-    tz, class = get!(TIME_ZONE_CACHE, str) do
+    tz, class = get!(default_tz_cache(), str) do
         tz_path = joinpath(TZData.COMPILED_DIR, split(str, "/")...)
 
         if isfile(tz_path)
@@ -98,12 +118,12 @@ function istimezone(str::AbstractString, mask::Class=Class(:DEFAULT))
     end
 
     # Perform more expensive checks against pre-compiled time zones
-    tz, class = get(TIME_ZONE_CACHE, str) do
+    tz, class = get(default_tz_cache(), str) do
         tz_path = joinpath(TZData.COMPILED_DIR, split(str, "/")...)
 
         if isfile(tz_path)
             # Cache the data since we're already performing the deserialization
-            TIME_ZONE_CACHE[str] = open(deserialize, tz_path, "r")
+            default_tz_cache()[str] = open(deserialize, tz_path, "r")
         else
             nothing, Class(:NONE)
         end

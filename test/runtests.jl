@@ -72,6 +72,7 @@ include("helpers.jl")
     include("rounding.jl")
     include("parse.jl")
     include("plotting.jl")
+    include("thread-safety.jl")
 
     # Note: Run the build tests last to ensure that re-compiling the time zones files
     # doesn't interfere with other tests.

@@ -2,7 +2,7 @@ using TimeZones: Class
 
 @testset "istimezone" begin
     # Invalidate the cache to ensure that `istimezone` works for non-loaded time zones.
-    empty!(TimeZones.TIME_ZONE_CACHE)
+    TimeZones._reset_tz_cache()
 
     @test istimezone("Europe/Warsaw")
     @test istimezone("UTC+02")

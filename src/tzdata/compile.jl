@@ -2,7 +2,7 @@ using Dates
 using Serialization
 using Dates: parse_components
 
-using ...TimeZones: TIME_ZONE_CACHE
+using ...TimeZones: default_tz_cache
 using ...TimeZones: TimeZones, TimeZone, FixedTimeZone, VariableTimeZone, Transition, Class
 using ...TimeZones: rename
 using ..TZData: TimeOffset, ZERO, MIN_GMT_OFFSET, MAX_GMT_OFFSET, MIN_SAVE, MAX_SAVE,
@@ -694,7 +694,7 @@ function compile(tz_source::TZSource, dest_dir::AbstractString; kwargs...)
     results = compile(tz_source; kwargs...)
 
     isdir(dest_dir) || error("Destination directory doesn't exist")
-    empty!(TIME_ZONE_CACHE)
+    empty!(default_tz_cache())
 
     for (tz, class) in results
         parts = split(TimeZones.name(tz), '/')
