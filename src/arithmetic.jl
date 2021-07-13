@@ -25,14 +25,14 @@ function broadcasted(::typeof(+), r::StepRange{ZonedDateTime}, p::DatePeriod)
     # non-existent and ambiguous dates.
 
     tz = timezone(start)
-    if isa(tz, VariableTimeZone)
+    if isa(tz, AbstractVariableTimeZone)
         start = first_valid(DateTime(start) + p, tz, step)
     else
         start = start + p
     end
 
     tz = timezone(stop)
-    if isa(tz, VariableTimeZone)
+    if isa(tz, AbstractVariableTimeZone)
         stop = last_valid(DateTime(stop) + p, tz, step)
     else
         stop = stop + p

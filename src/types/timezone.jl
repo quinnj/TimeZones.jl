@@ -46,7 +46,10 @@ function TimeZone(str::AbstractString, mask::Class=Class(:DEFAULT))
     tz, class = get!(TIME_ZONE_CACHE, str) do
         tz_path = joinpath(TZData.COMPILED_DIR, split(str, "/")...)
 
-        if isfile(tz_path)
+        if mask == Class(:DEFAULT) && is_standard_iana(str)
+            # TODO: idk if this as sensible way to handle class and mask
+            get_iana_timezone!(str), Class(:DEFAULT)
+        elseif isfile(tz_path)
             open(deserialize, tz_path, "r")
         elseif occursin(FIXED_TIME_ZONE_REGEX, str)
             FixedTimeZone(str), Class(:FIXED)

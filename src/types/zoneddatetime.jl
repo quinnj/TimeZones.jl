@@ -104,6 +104,14 @@ function ZonedDateTime(dt::DateTime, tz::VariableTimeZone, is_dst::Bool)
     end
 end
 
+function ZonedDateTime(dt::DateTime, tz::IANATimeZone, occ_or_dst::Integer)
+    return _do_and_rewrap(ZonedDateTime, dt, tz, occ_or_dst)
+end
+
+function ZonedDateTime(dt::DateTime, tz::IANATimeZone; kwargs...)
+    return _do_and_rewrap(ZonedDateTime, dt, tz; kwargs...)
+end
+
 # Convenience constructors
 @doc """
     ZonedDateTime(y, [m, d, h, mi, s, ms], tz, [amb]) -> DateTime
@@ -113,7 +121,7 @@ Construct a `ZonedDateTime` type by parts. Arguments `y, m, ..., ms` must be con
 `TimeZone` then `amb` can be supplied to resolve ambiguity.
 """ ZonedDateTime
 
-@optional function ZonedDateTime(y::Integer, m::Integer=1, d::Integer=1, h::Integer=0, mi::Integer=0, s::Integer=0, ms::Integer=0, tz::VariableTimeZone, amb::Union{Integer,Bool})
+@optional function ZonedDateTime(y::Integer, m::Integer=1, d::Integer=1, h::Integer=0, mi::Integer=0, s::Integer=0, ms::Integer=0, tz::AbstractVariableTimeZone, amb::Union{Integer,Bool})
     ZonedDateTime(DateTime(y,m,d,h,mi,s,ms), tz, amb)
 end
 

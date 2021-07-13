@@ -5,12 +5,27 @@ end
 
 Base.isless(a::Transition, b::Transition) = isless(a.utc_datetime, b.utc_datetime)
 
+# TODO: define and document an actual API for this
+# Seems to need: (list may be incomplete)
+# - transitions(tz)
+# - name(tz)
+# - first_valid(tz)
+# - last_valid(tz)
+# - some constructors for ZonedDateTime
+#
+# As well as ones that are common to TimeZone
+# - astimezone(zdt, tz)
+# - show(io, tz)
+# - print(io, tz)
+# - `==` and `hash`
+abstract type AbstractVariableTimeZone <: TimeZone end
+
 """
     VariableTimeZone
 
 A `TimeZone` with an offset that changes over time.
 """
-struct VariableTimeZone <: TimeZone
+struct VariableTimeZone <: AbstractVariableTimeZone
     name::String
     transitions::Vector{Transition}
     cutoff::Union{DateTime,Nothing}
@@ -19,6 +34,8 @@ struct VariableTimeZone <: TimeZone
         new(name, transitions, cutoff)
     end
 end
+
+transitions(tz::VariableTimeZone) = tz.transitions
 
 name(tz::VariableTimeZone) = tz.name
 

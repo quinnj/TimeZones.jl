@@ -175,6 +175,8 @@ Converts a `ZonedDateTime` from its current `TimeZone` into the specified `TimeZ
 """
 function astimezone end
 
+astimezone(zdt::ZonedDateTime, tz::IANATimeZone) = _do_and_rewrap(astimezone, zdt, tz)
+
 function astimezone(zdt::ZonedDateTime, tz::VariableTimeZone)
     i = searchsortedlast(
         tz.transitions, zdt.utc_datetime,

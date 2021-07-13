@@ -46,7 +46,7 @@
         @test !isequal(a, b)
         @test hash(a) == hash(b)
     end
-    
+
     @testset "hash using name" begin
         a = first(compile("Europe/Warsaw", tzdata["europe"]))
         b = VariableTimeZone("Europe/Warsaw", a.transitions[1:1], nothing)

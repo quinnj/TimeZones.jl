@@ -47,6 +47,7 @@ function __init__()
     )
 
     global ISOZonedDateTimeFormat = DateFormat("yyyy-mm-ddTHH:MM:SS.ssszzz")
+    init_IANA_NAMES!()
 end
 
 include("compat.jl")
@@ -58,6 +59,7 @@ include("utcoffset.jl")
 include(joinpath("types", "timezone.jl"))
 include(joinpath("types", "fixedtimezone.jl"))
 include(joinpath("types", "variabletimezone.jl"))
+include(joinpath("types", "ianatimezone.jl"))
 include(joinpath("types", "zoneddatetime.jl"))
 include("exceptions.jl")
 include(joinpath("tzdata", "TZData.jl"))

@@ -163,3 +163,7 @@ function last_valid(local_dt::DateTime, tz::VariableTimeZone)
     possible = interpret(local_dt, tz, Local)
     return isempty(possible) ? first(shift_gap(local_dt, tz)) : last(possible)
 end
+
+
+first_valid(dt::DateTime, tz::IANATimeZone, args...) = _do_and_rewrap(first_valid, dt, tz, args...)
+last_valid(dt::DateTime, tz::IANATimeZone, args...) = _do_and_rewrap(last_valid, dt, tz, args...)

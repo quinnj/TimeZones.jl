@@ -154,15 +154,16 @@ next_transition_instant
 
 function next_transition_instant(zdt::ZonedDateTime)
     tz = zdt.timezone
-    tz isa VariableTimeZone || return nothing
+    tz isa AbstractVariableTimeZone || return nothing
 
+    transits = transitions(tz)
     # Determine the index of the transition which occurs after the UTC datetime specified
     index = searchsortedfirst(
-        tz.transitions, DateTime(zdt, UTC),
+        transits, DateTime(zdt, UTC),
         by=el -> isa(el, TimeZones.Transition) ? el.utc_datetime : el,
     )
 
-    index <= length(tz.transitions) || return nothing
+    index <= length(transits) || return nothing
 
     # Use the UTC datetime of the transition and the offset information prior to the
     # transition to create a `ZonedDateTime` which cannot be constructed with the high-level
@@ -170,8 +171,8 @@ function next_transition_instant(zdt::ZonedDateTime)
     # transition but visually appears to be before the transition. For example in a
     # transition where the clock changes from 01:59 → 03:00 we would return 02:00 where
     # the UTC datetime of 02:00 == 03:00.
-    utc_datetime = tz.transitions[index].utc_datetime
-    prev_zone = tz.transitions[index - 1].zone
+    utc_datetime = transits[index].utc_datetime
+    prev_zone = transits[index - 1].zone
     ZonedDateTime(utc_datetime, tz, prev_zone)
 end
 
