@@ -17,7 +17,7 @@ function Base.:(-)(zdt::ZonedDateTime, p::TimePeriod)
     return ZonedDateTime(DateTime(zdt, UTC) - p, timezone(zdt); from_utc=true)
 end
 
-function broadcasted(::typeof(+), r::StepRange{ZonedDateTime}, p::DatePeriod)
+function broadcasted(::typeof(+), r::StepRange{<:ZonedDateTime}, p::DatePeriod)
     start, step, stop = first(r), Base.step(r), last(r)
 
     # Since the local time + period can result in an invalid local datetime when working with
@@ -41,10 +41,10 @@ function broadcasted(::typeof(+), r::StepRange{ZonedDateTime}, p::DatePeriod)
     return StepRange(start, step, stop)
 end
 
-function broadcasted(::typeof(+), r::StepRange{ZonedDateTime}, p::TimePeriod)
+function broadcasted(::typeof(+), r::StepRange{<:ZonedDateTime}, p::TimePeriod)
     return StepRange(r.start + p, r.step, r.stop + p)
 end
 
-broadcasted(::typeof(+), p::Period, r::StepRange{ZonedDateTime}) = broadcasted(+, r, p)
-broadcasted(::typeof(-), r::StepRange{ZonedDateTime}, p::Period) = broadcasted(+, r, -p)
-broadcasted(::typeof(-), p::Period, r::StepRange{ZonedDateTime}) = broadcasted(-, r, p)
+broadcasted(::typeof(+), p::Period, r::StepRange{<:ZonedDateTime}) = broadcasted(+, r, p)
+broadcasted(::typeof(-), r::StepRange{<:ZonedDateTime}, p::Period) = broadcasted(+, r, -p)
+broadcasted(::typeof(-), p::Period, r::StepRange{<:ZonedDateTime}) = broadcasted(-, r, p)

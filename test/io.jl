@@ -76,8 +76,7 @@ zdt = ZonedDateTime(dt, warsaw)
 zdt_vector = [zdt]
 @test sprint(show, MIME("text/plain"), zdt_vector) == summary(zdt_vector) * ":\n 1942-12-25T01:23:45+01:00"
 
-prefix = VERSION >= v"1.5.0-DEV.224" ? "" : "ZonedDateTime"
-@test sprint(show, zdt_vector; context=:compact => true) == "$prefix[ZonedDateTime(1942, 12, 25, 1, 23, 45, tz\"Europe/Warsaw\")]"
+@test sprint(show, zdt_vector; context=:compact => true) == "ZonedDateTime{VariableTimeZone}[ZonedDateTime(1942, 12, 25, 1, 23, 45, tz\"Europe/Warsaw\")]"
 
 
 # TimeZone parsing

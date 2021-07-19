@@ -6,22 +6,20 @@ using Dates: AbstractDateTime, argerror, validargs
 # A `DateTime` that includes `TimeZone` information.
 # """
 
-struct ZonedDateTime <: AbstractDateTime
+struct ZonedDateTime{T<:TimeZone} <: AbstractDateTime
     utc_datetime::DateTime
-    timezone::TimeZone
+    timezone::T
     zone::FixedTimeZone  # The current zone for the utc_datetime.
+end
 
-    function ZonedDateTime(utc_datetime::DateTime, timezone::TimeZone, zone::FixedTimeZone)
-        return new(utc_datetime, timezone, zone)
+function ZonedDateTime(
+    utc_datetime::DateTime, timezone::VariableTimeZone, zone::FixedTimeZone
+)
+    if timezone.cutoff !== nothing && utc_datetime >= timezone.cutoff
+        throw(UnhandledTimeError(timezone))
     end
 
-    function ZonedDateTime(utc_datetime::DateTime, timezone::VariableTimeZone, zone::FixedTimeZone)
-        if timezone.cutoff !== nothing && utc_datetime >= timezone.cutoff
-            throw(UnhandledTimeError(timezone))
-        end
-
-        return new(utc_datetime, timezone, zone)
-    end
+    return ZonedDateTime{VariableTimeZone}(utc_datetime, timezone, zone)
 end
 
 """
@@ -181,11 +179,11 @@ function Base.hash(zdt::ZonedDateTime, h::UInt)
     return h
 end
 
-Base.typemin(::Type{ZonedDateTime}) = ZonedDateTime(typemin(DateTime), utc_tz; from_utc=true)
-Base.typemax(::Type{ZonedDateTime}) = ZonedDateTime(typemax(DateTime), utc_tz; from_utc=true)
+Base.typemin(::Type{<:ZonedDateTime}) = ZonedDateTime(typemin(DateTime), utc_tz; from_utc=true)
+Base.typemax(::Type{<:ZonedDateTime}) = ZonedDateTime(typemax(DateTime), utc_tz; from_utc=true)
 
 # Note: The `validargs` function is as part of the Dates parsing interface.
-function Dates.validargs(::Type{ZonedDateTime}, y::Int64, m::Union{Int64, Int32}, d::Int64, h::Int64, mi::Int64, s::Int64, ms::Int64, tz::AbstractString)
+function Dates.validargs(::Type{<:ZonedDateTime}, y::Int64, m::Union{Int64, Int32}, d::Int64, h::Int64, mi::Int64, s::Int64, ms::Int64, tz::AbstractString)
     err = validargs(DateTime, y, Int64(m), d, h, mi, s, ms)
     err === nothing || return err
     istimezone(tz) || return argerror("TimeZone: \"$tz\" is not a recognized time zone")

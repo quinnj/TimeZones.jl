@@ -430,4 +430,18 @@ using Dates: Hour, Second, UTM, @dateformat_str
         @test typemin(ZonedDateTime) <= ZonedDateTime(typemin(DateTime), utc)
         @test typemax(ZonedDateTime) >= ZonedDateTime(typemax(DateTime), utc)
     end
+
+    @testset "isbits(::ZonedDateTime)" begin
+        # https://github.com/JuliaTime/TimeZones.jl/issues/271
+
+        @testset "typeof($zone)" for zone in (tz"America/Winnipeg", FixedTimeZone("0123"))
+            # We are not isbits until we fix the timezone to also be isbits
+            zdt = ZonedDateTime(Date(2000), zone)
+            if isbits(zone)
+                @test isbits(zdt)
+            else
+                @test_broken isbits(zdt)
+            end
+        end
+    end
 end

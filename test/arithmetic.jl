@@ -55,7 +55,7 @@ spring_zdt = ZonedDateTime(spring, warsaw)
 
 # Arithmetic with a StepRange should always work even when the start/stop lands on
 # ambiguous or non-existent DateTimes.
-@testset "StepRange{ZonedDateTime}" begin
+@testset "StepRange{<:ZonedDateTime}" begin
     @testset "time-period" begin
         dt = DateTime(2015, 6, 1)
 
@@ -71,7 +71,7 @@ spring_zdt = ZonedDateTime(spring, warsaw)
         )
         @test results == expected
         @test length(results) == 2
-        @test results isa StepRange{ZonedDateTime}
+        @test results isa StepRange{<:ZonedDateTime}
     end
 
     @testset "date-period" begin
@@ -89,7 +89,7 @@ spring_zdt = ZonedDateTime(spring, warsaw)
         )
         @test results == expected
         @test length(results) == 2
-        @test results isa StepRange{ZonedDateTime}
+        @test results isa StepRange{<:ZonedDateTime}
     end
 
     @testset "ambiguous" begin
